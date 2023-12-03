@@ -1,0 +1,19 @@
+{
+  "name": "desktop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^27.0.4",
+    "electron-builder": "^24.6.4"
+  },
+  "description": "",
+  "dependencies": {
+    "electron-updater": "^6.1.4"
+  }
+}

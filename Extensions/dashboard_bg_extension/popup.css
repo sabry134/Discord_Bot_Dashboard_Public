@@ -1,0 +1,16 @@
+body {
+  min-width: 200px;
+}
+
+#buttonContainer {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 5px 0;
+  padding: 10px;
+}

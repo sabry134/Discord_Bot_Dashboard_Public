@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    ports:
+      - "8081:80"
+      - "8082:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  discord_front:
+    image: "sabrysuperman/discord_front:latest"
+    container_name: "discord_front"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.discord_front.rule=Host(`localhost`) && PathPrefix(`/discord_front`)"
+      - "traefik.http.services.discord_front.loadbalancer.server.port=80"
+    ports:
+      - "8080:80"
+
+  discord_api:
+    image: "sabrysuperman/discord-api:latest"
+    container_name: "discord_api"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.discord_api.rule=Host(`localhost`) && PathPrefix(`/discord_api`)"
+      - "traefik.http.services.discord_api.loadbalancer.server.port=3000"
+    ports:
+      - "3000:3000"

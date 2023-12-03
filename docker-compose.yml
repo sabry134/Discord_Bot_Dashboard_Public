@@ -1,0 +1,15 @@
+version: '3'
+services:
+  front:
+    build:
+      context: .
+      dockerfile: ./admin/Dockerfile
+    ports:
+      - "8080:80"
+
+  api:
+    build:
+      context: .
+      dockerfile: ./API_Management/Dockerfile.api
+    ports:
+      - "3000:3000"

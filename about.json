@@ -1,0 +1,55 @@
+{
+    "name": "Bot Dashboard",
+    "description": "A web-based dashboard for managing and interacting with our Discord bot.",
+    "version": "1.0.0",
+    "author": "Sabry",
+    "github": "https://github.com/sabry134/Discord-Bot-Dashboard",
+    "bot_invite": "https://discord.com/oauth2/authorize?client_id=YOUR_BOT_CLIENT_ID&scope=bot&permissions=8",
+    "dependencies": [
+      {
+        "name": "Node.js",
+        "version": "16.20.2"
+      },
+      {
+        "name": "Express",
+        "version": "4.18.2"
+      },
+      {
+        "name": "Discord.js",
+        "version": "14.13.0"
+      },
+      {
+        "name": "Node-Cron",
+        "version": "1.0.0"
+      },
+      {
+        "name": "dotenv",
+        "version": "10.0.0"
+      },
+      {
+        "name": "axios",
+        "version": "0.23.0"
+      }
+    ],
+    "features": [
+      "User-friendly dashboard for managing your bot",
+      "Real-time status and control of your bot",
+      "Announcements and notifications",
+      "Customizable settings for your bot",
+      "Customizable Administration dashboard",
+      "Plans to add specific command categories"
+    ],
+    "front": [
+      {
+      "client": "127.0.0.1",
+      "port": "8080"
+      }
+    ],
+    "back": [
+      {
+      "server": "127.0.0.1",
+      "port": "3000"
+      }
+    ]
+  }
+  

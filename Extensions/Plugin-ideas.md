@@ -1,0 +1,4 @@
+- Task manager -> the discord bot DMs assignees
+- Website logs
+- Website stats
+- Website health check (doing GET requests on the back and checks if up or down)

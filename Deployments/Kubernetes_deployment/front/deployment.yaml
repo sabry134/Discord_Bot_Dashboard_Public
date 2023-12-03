@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-front-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: discord-front
+  template:
+    metadata:
+      labels:
+        app: discord-front
+    spec:
+      containers:
+      - name: discord-front
+        image: sabrysuperman/discord_front:latest
+        ports:
+        - containerPort: 80
