@@ -1,6 +1,15 @@
 <?php
 
-// Load environment variables from .env file
+session_start();
+
+if (!$_SESSION['logged_in']) {
+    header('Location: error.php');
+    exit();
+}
+extract($_SESSION['userData']);
+
+$avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
+
 $envFile = __DIR__ . '/.env';
 
 if (file_exists($envFile)) {

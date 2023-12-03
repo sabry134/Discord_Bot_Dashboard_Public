@@ -355,15 +355,15 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
       <div class="menu-title" onclick="toggleMenu()">☰</div>
       <div class="menu-items">
         <a class="status-text" href="dashboard.php">Dashboard</a>
-        <a class="hidden-text" href="webhook_manager.php">Manage Webhooks</a>
         <a class="commands-text" href="commands.php">Commands</a>
-        <a class="alert-text" href="alerts.php">Alerts</a>
-        <a class="message-text" href="message.php">Send a message</a>
-        <a class="documentation-text" href="documentation.php">Staff documentation</a>
-        <a class="area-text" href="area.php">AREA</a>
-        <a class="request-text" href="requests.php">Inbox</a>
-        <a class="settings-text" href="settings.php">Settings</a>
+        <a class="hidden-text" href="webhook_manager.php">Manage Webhooks</a>
         <a class="manage-text" href="manage_bot.php">Manage Servers</a>
+        <a class="message-text" href="message.php">Send a message</a>
+        <a class="area-text" href="area.php">AREA</a>
+        <a class="alert-text" href="alerts.php">Alerts</a>
+        <a class="request-text" href="requests.php">Inbox</a>
+        <a class="documentation-text" href="documentation.php">Staff documentation</a>
+        <a class="settings-text" href="settings.php">Settings</a>
         <a class="user-text" href="../user/index.php">User Dashboard</a>
       </div>
     </div>

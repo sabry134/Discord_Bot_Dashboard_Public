@@ -19,57 +19,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
   <title>Bot Dashboard</title>
   <link rel="icon" type="image/png" href="img/Sparkles.png">
   <script>
-    var botState = 'offline';
-
-    function toggleBot() {
-      var button = document.getElementById('bot-button');
-      var statusDot = document.getElementById('status-dot');
-      var statusText = document.getElementById('status-text');
-
-      if (botState === 'offline') {
-        fetch('http://localhost:3000/start', {
-          method: 'POST',
-        }).then(function(response) {
-          if (response.ok) {
-            button.textContent = "Stop bot";
-            botState = 'online';
-            statusText.textContent = 'Your bot is online';
-            statusDot.style.backgroundColor = 'green';
-            localStorage.setItem('botState', botState);
-          } else {
-            alert('Failed to start the bot.');
-          }
-        });
-      } else {
-        fetch('http://localhost:3000/stop', {
-          method: 'POST',
-        }).then(function(response) {
-          if (response.ok) {
-            button.textContent = "Start bot";
-            botState = 'offline';
-            statusText.textContent = 'Your bot is offline';
-            statusDot.style.backgroundColor = 'red';
-            localStorage.setItem('botState', botState);
-          } else {
-            alert('Failed to stop the bot.');
-          }
-        });
-      }
-    }
-
-    window.addEventListener('load', function() {
-      botState = localStorage.getItem('botState') || 'offline';
-      var button = document.getElementById('bot-button');
-      var statusDot = document.getElementById('status-dot');
-      var statusText = document.getElementById('status-text');
-
-      if (botState === 'online') {
-        button.textContent = "Stop bot";
-        statusText.textContent = 'Your bot is online';
-        statusDot.style.backgroundColor = 'green';
-      }
-    });
-
     function toggleLogout() {
       var usernameContainer = document.querySelector(".username-container");
       usernameContainer.classList.toggle('clicked');
@@ -511,15 +460,15 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
     <div class="menu-title" onclick="toggleMenu()">☰</div>
     <div class="menu-items">
       <a class="status-text" href="dashboard.php">Dashboard</a>
-      <a class="hidden-text" href="webhook_manager.php">Manage Webhooks</a>
       <a class="commands-text" href="commands.php">Commands</a>
-      <a class="alert-text" href="alerts.php">Alerts</a>
-      <a class="message-text" href="message.php">Send a message</a>
-      <a class="documentation-text" href="documentation.php">Staff documentation</a>
-      <a class="area-text" href="area.php">AREA</a>
-      <a class="request-text" href="requests.php">Inbox</a>
-      <a class="settings-text" href="settings.php">Settings</a>
+      <a class="hidden-text" href="webhook_manager.php">Manage Webhooks</a>
       <a class="manage-text" href="manage_bot.php">Manage Servers</a>
+      <a class="message-text" href="message.php">Send a message</a>
+      <a class="area-text" href="area.php">AREA</a>
+      <a class="alert-text" href="alerts.php">Alerts</a>
+      <a class="request-text" href="requests.php">Inbox</a>
+      <a class="documentation-text" href="documentation.php">Staff documentation</a>
+      <a class="settings-text" href="settings.php">Settings</a>
       <a class="user-text" href="../user/index.php">User Dashboard</a>
     </div>
   </div>
