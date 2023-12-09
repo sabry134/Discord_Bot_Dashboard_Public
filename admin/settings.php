@@ -430,7 +430,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
     <div class="container">
         <h1 class="center">Bot Dashboard</h1>
         <div class="grey-box">
-            <h2>Your Grey Box Content Goes Here</h2>
+            <h2>A package is an extension available on the dashboard that allows you to access additional pages.</h2>
             <button onclick="togglePackages()">Enable Package</button>
         </div>
     </div>
