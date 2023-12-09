@@ -9,6 +9,7 @@ extract($_SESSION['userData']);
 
 $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -264,7 +265,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         .center {
             margin-top: 10px;
-            position: fixed;
             text-align: center;
             font-size: 50px;
             padding: 10px;
@@ -316,7 +316,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
-            z-index: -1;
         }
 
         .request-text {
@@ -366,51 +365,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         .menu-items a:hover {
             background-color: #555;
         }
-
-        .email-container {
-            margin-left: 30px;
-            margin-top: 100px;
-        }
-
-        .email-item a {
-            text-decoration: none;
-        }
-
-        .email-item p {
-            color: white;
-        }
-
-
-        .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 30px;
-            list-style-type: none;
-        }
-
-        .email-container .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 20%;
-            margin-top: 15px;
-        }
-
-
-        .email-item:hover {
-            background-color: #f9f9f9;
-        }
-
-        .menu-items .packages-menu-item {
-            font-weight: bold;
-        }
     </style>
 </head>
 
@@ -442,14 +396,8 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <h1 class="center">Email Inbox</h1>
+        <h1 class="center">Bot Dashboard</h1>
     </div>
-
-    <div class="email-container" id="inboxContainer">
-        <ul id="emailList"></ul>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="assets/app.js"></script>
     <script>
         function toggleMenu() {
             var menu = document.querySelector('.menu');
@@ -493,41 +441,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 requestText.classList.remove('collapsed');
                 userText.classList.remove('collapsed');
                 manageText.classList.remove('collapsed');
-            }
-        }
-
-        function toggleMenuAndLoadInbox() {
-            toggleMenu();
-            loadEmailInbox();
-        }
-
-        document.querySelector('.request-text').addEventListener('click', toggleMenuAndLoadInbox);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var packagesEnabled = localStorage.getItem('packagesEnabled');
-            if (packagesEnabled === 'true') {
-                togglePackages();
-            }
-        });
-
-        function togglePackages() {
-            var menuItems = document.querySelector('.menu-items');
-            var enablePackageButton = document.querySelector('.grey-box button');
-
-            var packagesMenuItem = document.querySelector('.packages-menu-item');
-
-            if (!packagesMenuItem) {
-                var newMenuItem = document.createElement('a');
-                newMenuItem.className = 'packages-menu-item';
-                newMenuItem.href = 'packages.php';
-                newMenuItem.innerText = 'Packages';
-                menuItems.appendChild(newMenuItem);
-                enablePackageButton.innerText = 'Disable Package';
-                localStorage.setItem('packagesEnabled', 'true');
-            } else {
-                packagesMenuItem.remove();
-                enablePackageButton.innerText = 'Enable Package';
-                localStorage.setItem('packagesEnabled', 'false');
             }
         }
     </script>

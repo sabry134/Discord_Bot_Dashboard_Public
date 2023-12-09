@@ -8,13 +8,48 @@ if (!$_SESSION['logged_in']) {
 extract($_SESSION['userData']);
 
 $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
+
+require_once 'config.php';
+
+if (!isset($_SESSION['access_token']) || !isset($_SESSION['github_user'])) {
+    echo '<a href="login.php" class="github-button">';
+    echo '<i class="fab fa-github"></i>Login with GitHub</a>';
+} else {
+    echo '<a href="create_repo.php" class="github-button">';
+    echo '<i class="fab fa-github"></i>Create GitHub Repository</a>';
+}
+$github_username = 'YOUR_GITHUB_USERNAME';
+$github_repository = 'Discord_Bot_Dashboard_Public';
+$github_token = 'YOUR_GITHUB_TOKEN';
+
+$api_url = "https://api.github.com/repos/$github_username/$github_repository/commits?per_page=1";
+$options = [
+    'http' => [
+        'header' => [
+            "Authorization: Bearer $github_token",
+            "User-Agent: Your-App-Name"
+        ]
+    ]
+];
+$context = stream_context_create($options);
+$response = file_get_contents($api_url, false, $context);
+$commits = json_decode($response, true);
+
+$latest_commit = $commits[0]['commit'];
+$commit_author = $latest_commit['author']['name'];
+$commit_message = $latest_commit['message'];
+$commit_date = $latest_commit['author']['date'];
+
+$commit_date_formatted = date("F j, Y, g:i a", strtotime($commit_date));
 ?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Bot Dashboard</title>
     <link rel="icon" type="image/png" href="img/Sparkles.png">
     <script>
@@ -263,8 +298,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         }
 
         .center {
-            margin-top: 10px;
-            position: fixed;
+            margin-top: -30px;
             text-align: center;
             font-size: 50px;
             padding: 10px;
@@ -316,7 +350,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
-            z-index: -1;
         }
 
         .request-text {
@@ -367,49 +400,85 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #555;
         }
 
-        .email-container {
-            margin-left: 30px;
-            margin-top: 100px;
+        .github-container {
+            margin-top: 15%;
+            margin-right: 45%;
+            position: relative;
+            display: inline-block;
         }
 
-        .email-item a {
+        .github-button-box {
+            display: inline-block;
+            margin-left: 15%;
+            background-color: #34495e;
+            border-radius: 10px;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .github-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
             text-decoration: none;
+            color: #fff;
+            cursor: pointer;
         }
 
-        .email-item p {
+        .github-button i {
+            margin-right: 8px;
+        }
+
+        .github-button:hover {
+            background-color: #34495e;
+        }
+
+        .github-commit-details-container {
+            background-color: grey;
+            border-radius: 10px;
+            padding: 15px;
+            margin-right: 40%;
+            margin-top: 10%;
+            z-index: 1;
+        }
+
+        .github-commit-details {
+            color: white;
+            z-index: 1;
+        }
+
+        .commit-info {
             color: white;
         }
 
-
-        .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 30px;
-            list-style-type: none;
+        .github-fork-button-box {
+            display: inline-block;
+            margin-left: 15%;
+            background-color: #34495e;
+            border-radius: 10px;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
         }
 
-        .email-container .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 20%;
-            margin-top: 15px;
+        .github-fork-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #fff;
+            cursor: pointer;
         }
 
-
-        .email-item:hover {
-            background-color: #f9f9f9;
+        .github-fork-button i {
+            margin-right: 8px;
         }
 
-        .menu-items .packages-menu-item {
-            font-weight: bold;
+        .github-fork-button:hover {
+            background-color: #34495e;
         }
     </style>
 </head>
@@ -442,14 +511,43 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <h1 class="center">Email Inbox</h1>
-    </div>
+        <h1 class="center">Bot Dashboard</h1>
+        <div class="github-commit-details-container">
+            <div class="github-commit-details">
+                <h2 style="color: white;">Latest GitHub Commit:</h2>
+                <p class="commit-info"><strong>Author:</strong> <?php echo $commit_author; ?></p>
+                <p class="commit-info"><strong>Message:</strong> <?php echo $commit_message; ?></p>
+                <p class="commit-info"><strong>Commit Hash:</strong> <?php echo $commits[0]['sha']; ?></p>
+                <p class="commit-info"><strong>Date:</strong> <?php echo $commit_date_formatted; ?></p>
+            </div>
+            <div class="github-button-box">
+                <?php
+                require_once 'config.php';
 
-    <div class="email-container" id="inboxContainer">
-        <ul id="emailList"></ul>
+                if (!isset($_SESSION['access_token'])) {
+                    echo '<a href="login.php" class="github-button">';
+                    echo '<i class="fab fa-github"></i>Login with GitHub</a>';
+                } else {
+                    echo '<a href="create_repo.php" class="github-button">';
+                    echo '<i class="fab fa-github"></i>Create GitHub Repository</a>';
+                }
+                ?>
+            </div>
+            <br></br>
+            <div class="github-fork-button-box">
+                <?php
+
+                if (!isset($_SESSION['access_token'])) {
+                    echo '<a href="login.php" class="github-fork-button">';
+                    echo '<i class="fab fa-github"></i>Login with GitHub</a>';
+                } else {
+                    echo '<a href="fork_repo.php" class="github-fork-button">';
+                    echo '<i class="fab fa-github"></i>Fork GitHub Repository</a>';
+                }
+                ?>
+            </div>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="assets/app.js"></script>
     <script>
         function toggleMenu() {
             var menu = document.querySelector('.menu');
@@ -493,41 +591,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 requestText.classList.remove('collapsed');
                 userText.classList.remove('collapsed');
                 manageText.classList.remove('collapsed');
-            }
-        }
-
-        function toggleMenuAndLoadInbox() {
-            toggleMenu();
-            loadEmailInbox();
-        }
-
-        document.querySelector('.request-text').addEventListener('click', toggleMenuAndLoadInbox);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var packagesEnabled = localStorage.getItem('packagesEnabled');
-            if (packagesEnabled === 'true') {
-                togglePackages();
-            }
-        });
-
-        function togglePackages() {
-            var menuItems = document.querySelector('.menu-items');
-            var enablePackageButton = document.querySelector('.grey-box button');
-
-            var packagesMenuItem = document.querySelector('.packages-menu-item');
-
-            if (!packagesMenuItem) {
-                var newMenuItem = document.createElement('a');
-                newMenuItem.className = 'packages-menu-item';
-                newMenuItem.href = 'packages.php';
-                newMenuItem.innerText = 'Packages';
-                menuItems.appendChild(newMenuItem);
-                enablePackageButton.innerText = 'Disable Package';
-                localStorage.setItem('packagesEnabled', 'true');
-            } else {
-                packagesMenuItem.remove();
-                enablePackageButton.innerText = 'Enable Package';
-                localStorage.setItem('packagesEnabled', 'false');
             }
         }
     </script>

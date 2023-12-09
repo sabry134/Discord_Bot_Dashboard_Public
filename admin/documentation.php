@@ -71,13 +71,15 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         }
 
         .container {
+            margin-left: 10%;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            width: 80%;
+            width: calc(50% - 120px);
             max-width: 800px;
             position: absolute;
             top: 200px;
+            right: calc(120px + 5%);
             overflow: auto;
         }
 
@@ -85,10 +87,10 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #ccc;
             border-radius: 10px;
             padding: 20px;
-            width: 20%;
+            width: calc(30% - 120px);
             position: absolute;
             top: 200px;
-            left: 300px;
+            left: calc(120px + 5%);
             display: flex;
             flex-direction: column;
         }
@@ -316,7 +318,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             ?>
         </ul>
     </div>
-    <div class="container" style="margin-left: 25%;">
+    <div class="container">
         <h1>Bot Dashboard Documentation</h1>
         <div id="markdown-content">
             <?php
@@ -407,6 +409,34 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             usernameContainer.classList.toggle('clicked');
             var logoutButton = document.querySelector(".logout-button");
             logoutButton.classList.toggle('show-logout');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var packagesEnabled = localStorage.getItem('packagesEnabled');
+            if (packagesEnabled === 'true') {
+                togglePackages();
+            }
+        });
+
+        function togglePackages() {
+            var menuItems = document.querySelector('.menu-items');
+            var enablePackageButton = document.querySelector('.grey-box button');
+
+            var packagesMenuItem = document.querySelector('.packages-menu-item');
+
+            if (!packagesMenuItem) {
+                var newMenuItem = document.createElement('a');
+                newMenuItem.className = 'packages-menu-item';
+                newMenuItem.href = 'packages.php';
+                newMenuItem.innerText = 'Packages';
+                menuItems.appendChild(newMenuItem);
+                enablePackageButton.innerText = 'Disable Package';
+                localStorage.setItem('packagesEnabled', 'true');
+            } else {
+                packagesMenuItem.remove();
+                enablePackageButton.innerText = 'Enable Package';
+                localStorage.setItem('packagesEnabled', 'false');
+            }
         }
     </script>
 </body>

@@ -429,6 +429,10 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         .menu-items a:hover {
             background-color: #555;
         }
+
+        .menu-items .packages-menu-item {
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -625,6 +629,34 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                     console.error('Error:', error);
                     sendButton.disabled = false;
                 });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var packagesEnabled = localStorage.getItem('packagesEnabled');
+            if (packagesEnabled === 'true') {
+                togglePackages();
+            }
+        });
+
+        function togglePackages() {
+            var menuItems = document.querySelector('.menu-items');
+            var enablePackageButton = document.querySelector('.grey-box button');
+
+            var packagesMenuItem = document.querySelector('.packages-menu-item');
+
+            if (!packagesMenuItem) {
+                var newMenuItem = document.createElement('a');
+                newMenuItem.className = 'packages-menu-item';
+                newMenuItem.href = 'packages.php';
+                newMenuItem.innerText = 'Packages';
+                menuItems.appendChild(newMenuItem);
+                enablePackageButton.innerText = 'Disable Package';
+                localStorage.setItem('packagesEnabled', 'true');
+            } else {
+                packagesMenuItem.remove();
+                enablePackageButton.innerText = 'Enable Package';
+                localStorage.setItem('packagesEnabled', 'false');
+            }
         }
     </script>
 </body>

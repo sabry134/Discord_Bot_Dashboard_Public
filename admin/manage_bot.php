@@ -377,6 +377,45 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         .menu-items a:hover {
             background-color: #555;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .menu-items .packages-menu-item {
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -405,6 +444,13 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             <a class="documentation-text" href="documentation.php">Staff documentation</a>
             <a class="settings-text" href="settings.php">Settings</a>
             <a class="user-text" href="../user/index.php">User Dashboard</a>
+        </div>
+    </div>
+    <div id="serverDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeServerDetailsModal()">&times;</span>
+            <h2 id="serverDetailsTitle"></h2>
+            <p id="serverDetailsContent"></p>
         </div>
     </div>
     <div class="container">
@@ -445,7 +491,9 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         $containerClass = ($index === 0) ? 'server-box first-server-box' : 'server-box';
 
-        echo "<div class='{$containerClass}'>";
+
+
+        echo "<div class='{$containerClass}' onclick='showServerDetails(\"{$guild['id']}\")'>";
 
         echo "<p class='server-title'>{$guild['name']}</p>";
 
@@ -510,6 +558,48 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 requestText.classList.remove('collapsed');
                 userText.classList.remove('collapsed');
                 manageText.classList.remove('collapsed');
+            }
+        }
+
+        function showServerDetails(guildId) {
+            var serverDetailsTitle = document.getElementById('serverDetailsTitle');
+            var serverDetailsContent = document.getElementById('serverDetailsContent');
+
+            serverDetailsTitle.innerText = "Server Details";
+            serverDetailsContent.innerText = "Server ID: " + guildId;
+
+            document.getElementById('serverDetailsModal').style.display = 'block';
+        }
+
+        function closeServerDetailsModal() {
+            document.getElementById('serverDetailsModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var packagesEnabled = localStorage.getItem('packagesEnabled');
+            if (packagesEnabled === 'true') {
+                togglePackages();
+            }
+        });
+
+        function togglePackages() {
+            var menuItems = document.querySelector('.menu-items');
+            var enablePackageButton = document.querySelector('.grey-box button');
+
+            var packagesMenuItem = document.querySelector('.packages-menu-item');
+
+            if (!packagesMenuItem) {
+                var newMenuItem = document.createElement('a');
+                newMenuItem.className = 'packages-menu-item';
+                newMenuItem.href = 'packages.php';
+                newMenuItem.innerText = 'Packages';
+                menuItems.appendChild(newMenuItem);
+                enablePackageButton.innerText = 'Disable Package';
+                localStorage.setItem('packagesEnabled', 'true');
+            } else {
+                packagesMenuItem.remove();
+                enablePackageButton.innerText = 'Enable Package';
+                localStorage.setItem('packagesEnabled', 'false');
             }
         }
     </script>

@@ -9,12 +9,14 @@ extract($_SESSION['userData']);
 
 $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 ?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Bot Dashboard</title>
     <link rel="icon" type="image/png" href="img/Sparkles.png">
     <script>
@@ -264,7 +266,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         .center {
             margin-top: 10px;
-            position: fixed;
             text-align: center;
             font-size: 50px;
             padding: 10px;
@@ -316,7 +317,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
-            z-index: -1;
         }
 
         .request-text {
@@ -367,45 +367,49 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #555;
         }
 
-        .email-container {
-            margin-left: 30px;
-            margin-top: 100px;
+        .github-box {
+            background-color: #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: auto;
+            margin-right: 40%;
+            position: fixed;
+            z-index: 1;
         }
 
-        .email-item a {
-            text-decoration: none;
-        }
-
-        .email-item p {
-            color: white;
-        }
-
-
-        .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
+        .github-button {
+            width: 200px;
+            background-color: #2c2c2c;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
             border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 30px;
-            list-style-type: none;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .email-container .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
+        .extension-button {
+            width: 200px;
+            background-color: #2c2c2c;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
             border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 20%;
-            margin-top: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-
-        .email-item:hover {
-            background-color: #f9f9f9;
+        .extension-button i {
+            margin-right: 10px;
         }
 
         .menu-items .packages-menu-item {
@@ -442,14 +446,25 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <h1 class="center">Email Inbox</h1>
+        <div class="github-box">
+            <div class="github-button" onclick="location.href='github.php'">
+                <i class="fab fa-github"></i> Github Extension
+            </div>
+            <div class="extension-button" onclick="location.href='health.php'">
+                <i class="fas fa-heartbeat"></i> Health Extension
+            </div>
+            <div class="extension-button" onclick="location.href='logs.php'">
+                <i class="fas fa-file-alt"></i> Logs Extension
+            </div>
+            <div class="extension-button" onclick="location.href='task_manager.php'">
+                <i class="fas fa-tasks"></i> Task Manager
+            </div>
+            <div class="extension-button" onclick="location.href='stats.php'">
+                <i class="fas fa-chart-bar"></i> Statistics
+            </div>
+        </div>
+        <h1 class="center">Bot Dashboard</h1>
     </div>
-
-    <div class="email-container" id="inboxContainer">
-        <ul id="emailList"></ul>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="assets/app.js"></script>
     <script>
         function toggleMenu() {
             var menu = document.querySelector('.menu');
@@ -496,24 +511,18 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             }
         }
 
-        function toggleMenuAndLoadInbox() {
-            toggleMenu();
-            loadEmailInbox();
-        }
-
-        document.querySelector('.request-text').addEventListener('click', toggleMenuAndLoadInbox);
-
         document.addEventListener('DOMContentLoaded', function() {
             var packagesEnabled = localStorage.getItem('packagesEnabled');
             if (packagesEnabled === 'true') {
                 togglePackages();
+            } else {
+                displayErrorMessage();
             }
         });
 
         function togglePackages() {
             var menuItems = document.querySelector('.menu-items');
             var enablePackageButton = document.querySelector('.grey-box button');
-
             var packagesMenuItem = document.querySelector('.packages-menu-item');
 
             if (!packagesMenuItem) {
@@ -529,6 +538,11 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 enablePackageButton.innerText = 'Enable Package';
                 localStorage.setItem('packagesEnabled', 'false');
             }
+        }
+
+        function displayErrorMessage() {
+            alert('Error: You need to enable the package. Redirecting to settings...');
+            window.location.href = 'settings.php';
         }
     </script>
 </body>

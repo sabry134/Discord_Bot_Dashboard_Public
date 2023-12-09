@@ -365,6 +365,38 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         .menu-items a:hover {
             background-color: #555;
         }
+
+        .grey-box {
+            background-color: grey;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10% auto;
+            max-width: 600px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .grey-box h2 {
+            color: white;
+        }
+
+        .menu-items .packages-menu-item {
+            font-weight: bold;
+        }
+        .grey-box button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .grey-box button:hover {
+        background-color: #45a049;
+    }
     </style>
 </head>
 
@@ -397,6 +429,10 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
     </div>
     <div class="container">
         <h1 class="center">Bot Dashboard</h1>
+        <div class="grey-box">
+            <h2>Your Grey Box Content Goes Here</h2>
+            <button onclick="togglePackages()">Enable Package</button>
+        </div>
     </div>
     <script>
         function toggleMenu() {
@@ -441,6 +477,34 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 requestText.classList.remove('collapsed');
                 userText.classList.remove('collapsed');
                 manageText.classList.remove('collapsed');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var packagesEnabled = localStorage.getItem('packagesEnabled');
+            if (packagesEnabled === 'true') {
+                togglePackages();
+            }
+        });
+
+        function togglePackages() {
+            var menuItems = document.querySelector('.menu-items');
+            var enablePackageButton = document.querySelector('.grey-box button');
+
+            var packagesMenuItem = document.querySelector('.packages-menu-item');
+
+            if (!packagesMenuItem) {
+                var newMenuItem = document.createElement('a');
+                newMenuItem.className = 'packages-menu-item';
+                newMenuItem.href = 'packages.php';
+                newMenuItem.innerText = 'Packages';
+                menuItems.appendChild(newMenuItem);
+                enablePackageButton.innerText = 'Disable Package';
+                localStorage.setItem('packagesEnabled', 'true');
+            } else {
+                packagesMenuItem.remove();
+                enablePackageButton.innerText = 'Enable Package';
+                localStorage.setItem('packagesEnabled', 'false');
             }
         }
     </script>

@@ -2,7 +2,7 @@
 
 **Authors:** Sabry, mjmj
 
-Welcome to the Discord Bot Dashboard Template repository!
+**Welcome to the Discord Bot Dashboard Template repository!**
 
 ## Overview
 
@@ -155,6 +155,8 @@ node server.js
 - Access the dashboard in your web browser at the specified URL.
 - Log in with your Discord bot's credentials.
 - Use the dashboard to manage and configure your bot.
+
+  
 
 
 ## Contributing

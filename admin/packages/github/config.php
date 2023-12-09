@@ -1,0 +1,3 @@
+<?php
+ = 'YOUR_CLIENT_ID';
+ = 'YOUR_CLIENT_SECRET';

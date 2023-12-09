@@ -5,10 +5,57 @@ if (!$_SESSION['logged_in']) {
     header('Location: error.php');
     exit();
 }
+
 extract($_SESSION['userData']);
 
 $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
+
+$errorOccurred = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['repo_name'])) {
+        $repo_name = $_POST['repo_name'];
+
+        $repo_url = 'https://api.github.com/user/repos';
+
+        $data = [
+            'name' => $repo_name,
+            'auto_init' => true
+        ];
+
+        $options = [
+            CURLOPT_URL => $repo_url,
+            CURLOPT_HTTPHEADER => [
+                'Content-type: application/json',
+                'Authorization: Bearer ' . $_SESSION['access_token'],
+                'User-Agent: Your-App-Name'
+            ],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data)
+        ];
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+
+        $result = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            echo 'cURL Error: ' . curl_error($ch);
+            $errorOccurred = true;
+        } else {
+            $repo_data = json_decode($result, true);
+
+            if (!isset($repo_data['html_url'])) {
+                $errorOccurred = true;
+            }
+        }
+
+        curl_close($ch);
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -18,11 +65,96 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
     <title>Bot Dashboard</title>
     <link rel="icon" type="image/png" href="img/Sparkles.png">
     <script>
+        function showMessage(isSuccess, message) {
+            var container = document.createElement('div');
+            container.className = isSuccess ? 'success-container' : 'error-container';
+            container.textContent = message;
+
+            document.body.appendChild(container);
+
+            setTimeout(function() {
+                container.style.display = 'none';
+            }, 3000);
+        }
+
         function toggleLogout() {
             var usernameContainer = document.querySelector(".username-container");
             usernameContainer.classList.toggle('clicked');
             var logoutButton = document.querySelector(".logout-button");
             logoutButton.classList.toggle('show-logout');
+        }
+
+        function toggleMenu() {
+            var menu = document.querySelector('.menu');
+            var menuItems = document.querySelector('.menu-items');
+            var hiddenText = document.querySelector('.hidden-text');
+            var commandsText = document.querySelector('.commands-text');
+            var statusText = document.querySelector('.status-text');
+            var alertText = document.querySelector('.alert-text');
+            var settingsText = document.querySelector('.settings-text');
+            var documentationText = document.querySelector('.documentation-text');
+            var messageText = document.querySelector('.message-text');
+            var areaText = document.querySelector('.area-text');
+            var requestText = document.querySelector('.request-text');
+            var userText = document.querySelector('.user-text');
+            var manageText = document.querySelector('.manage-text');
+
+            menu.classList.toggle('collapsed');
+            const isCollapsed = menu.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                hiddenText.classList.add('collapsed');
+                commandsText.classList.add('collapsed');
+                statusText.classList.add('collapsed');
+                alertText.classList.add('collapsed');
+                settingsText.classList.add('collapsed');
+                documentationText.classList.add('collapsed');
+                messageText.classList.add('collapsed');
+                areaText.classList.add('collapsed');
+                requestText.classList.add('collapsed');
+                userText.classList.add('collapsed');
+                manageText.classList.add('collapsed');
+            } else {
+                hiddenText.classList.remove('collapsed');
+                commandsText.classList.remove('collapsed');
+                statusText.classList.remove('collapsed');
+                alertText.classList.remove('collapsed');
+                settingsText.classList.remove('collapsed');
+                documentationText.classList.remove('collapsed');
+                messageText.classList.remove('collapsed');
+                areaText.classList.remove('collapsed');
+                requestText.classList.remove('collapsed');
+                userText.classList.remove('collapsed');
+                manageText.classList.remove('collapsed');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var packagesEnabled = localStorage.getItem('packagesEnabled');
+            if (packagesEnabled === 'true') {
+                togglePackages();
+            }
+        });
+
+        function togglePackages() {
+            var menuItems = document.querySelector('.menu-items');
+            var enablePackageButton = document.querySelector('.grey-box button');
+
+            var packagesMenuItem = document.querySelector('.packages-menu-item');
+
+            if (!packagesMenuItem) {
+                var newMenuItem = document.createElement('a');
+                newMenuItem.className = 'packages-menu-item';
+                newMenuItem.href = 'packages.php';
+                newMenuItem.innerText = 'Packages';
+                menuItems.appendChild(newMenuItem);
+                enablePackageButton.innerText = 'Disable Package';
+                localStorage.setItem('packagesEnabled', 'true');
+            } else {
+                packagesMenuItem.remove();
+                enablePackageButton.innerText = 'Enable Package';
+                localStorage.setItem('packagesEnabled', 'false');
+            }
         }
     </script>
 
@@ -35,6 +167,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             padding: 0;
             position: relative;
             height: 100vh;
+            overflow: hidden;
         }
 
         .header {
@@ -44,7 +177,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             left: 0;
             width: 100%;
             height: 100px;
-            z-index: 0;
+            z-index: 1;
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -166,13 +299,14 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         }
 
         .container {
-            margin-left: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: flex-start;
+            width: 400px;
+            margin: 20px;
+            margin-left: 40%;
+            margin-top: 20%;
             padding: 20px;
-            transition: margin-left 0.3s;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .container.collapsed {
@@ -264,7 +398,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         .center {
             margin-top: 10px;
-            position: fixed;
             text-align: center;
             font-size: 50px;
             padding: 10px;
@@ -316,7 +449,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
-            z-index: -1;
         }
 
         .request-text {
@@ -367,45 +499,82 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #555;
         }
 
-        .email-container {
-            margin-left: 30px;
-            margin-top: 100px;
+        form {
+            position: relative;
         }
 
-        .email-item a {
-            text-decoration: none;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
 
-        .email-item p {
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .success-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
             color: white;
-        }
-
-
-        .email-item {
-            background-color: white;
             padding: 15px;
-            margin: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 30px;
-            list-style-type: none;
+            display: inline-block;
+            z-index: 2;
         }
 
-        .email-container .email-item {
-            background-color: white;
+        .error-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FF5733;
+            color: white;
             padding: 15px;
-            margin: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 20%;
-            margin-top: 15px;
+            display: inline-block;
+            z-index: 2;
         }
 
+        .form-label {
+            color: white;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
 
-        .email-item:hover {
-            background-color: #f9f9f9;
+        .form-instruction {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
 
         .menu-items .packages-menu-item {
@@ -442,95 +611,23 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <h1 class="center">Email Inbox</h1>
+        <form method="post" action="">
+            <p class="form-instruction">Fill out the form below to create a new GitHub repository:</p>
+            <label for="repo_name" class="form-label">Enter GitHub Repository Name:</label>
+            <input type="text" name="repo_name" required>
+            <br>
+            <input type="submit" value="Create Repository">
+            <?php
+            if ($errorOccurred) {
+                echo "<script>showMessage(false, 'Error creating repository.');</script>";
+            } elseif (isset($repo_data['html_url'])) {
+                echo "<script>showMessage(true, 'Repository created successfully.');</script>";
+            }
+            ?>
+        </form>
+
     </div>
 
-    <div class="email-container" id="inboxContainer">
-        <ul id="emailList"></ul>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="assets/app.js"></script>
-    <script>
-        function toggleMenu() {
-            var menu = document.querySelector('.menu');
-            var menuItems = document.querySelector('.menu-items');
-            var hiddenText = document.querySelector('.hidden-text');
-            var commandsText = document.querySelector('.commands-text');
-            var statusText = document.querySelector('.status-text');
-            var alertText = document.querySelector('.alert-text');
-            var settingsText = document.querySelector('.settings-text');
-            var documentationText = document.querySelector('.documentation-text');
-            var messageText = document.querySelector('.message-text');
-            var areaText = document.querySelector('.area-text');
-            var requestText = document.querySelector('.request-text');
-            var userText = document.querySelector('.user-text');
-            var manageText = document.querySelector('.manage-text');
-
-            menu.classList.toggle('collapsed');
-            const isCollapsed = menu.classList.contains('collapsed');
-
-            if (isCollapsed) {
-                hiddenText.classList.add('collapsed');
-                commandsText.classList.add('collapsed');
-                statusText.classList.add('collapsed');
-                alertText.classList.add('collapsed');
-                settingsText.classList.add('collapsed');
-                documentationText.classList.add('collapsed');
-                messageText.classList.add('collapsed');
-                areaText.classList.add('collapsed');
-                requestText.classList.add('collapsed');
-                userText.classList.add('collapsed');
-                manageText.classList.add('collapsed');
-            } else {
-                hiddenText.classList.remove('collapsed');
-                commandsText.classList.remove('collapsed');
-                statusText.classList.remove('collapsed');
-                alertText.classList.remove('collapsed');
-                settingsText.classList.remove('collapsed');
-                documentationText.classList.remove('collapsed');
-                messageText.classList.remove('collapsed');
-                areaText.classList.remove('collapsed');
-                requestText.classList.remove('collapsed');
-                userText.classList.remove('collapsed');
-                manageText.classList.remove('collapsed');
-            }
-        }
-
-        function toggleMenuAndLoadInbox() {
-            toggleMenu();
-            loadEmailInbox();
-        }
-
-        document.querySelector('.request-text').addEventListener('click', toggleMenuAndLoadInbox);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var packagesEnabled = localStorage.getItem('packagesEnabled');
-            if (packagesEnabled === 'true') {
-                togglePackages();
-            }
-        });
-
-        function togglePackages() {
-            var menuItems = document.querySelector('.menu-items');
-            var enablePackageButton = document.querySelector('.grey-box button');
-
-            var packagesMenuItem = document.querySelector('.packages-menu-item');
-
-            if (!packagesMenuItem) {
-                var newMenuItem = document.createElement('a');
-                newMenuItem.className = 'packages-menu-item';
-                newMenuItem.href = 'packages.php';
-                newMenuItem.innerText = 'Packages';
-                menuItems.appendChild(newMenuItem);
-                enablePackageButton.innerText = 'Disable Package';
-                localStorage.setItem('packagesEnabled', 'true');
-            } else {
-                packagesMenuItem.remove();
-                enablePackageButton.innerText = 'Enable Package';
-                localStorage.setItem('packagesEnabled', 'false');
-            }
-        }
-    </script>
 </body>
 
 </html>
