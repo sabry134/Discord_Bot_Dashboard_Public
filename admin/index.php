@@ -62,10 +62,10 @@
           </a>
         </div>
         <div class="job">
-          <a href="statistics.php">
+          <a href="../index.php">
             <img src="img/tester.png" alt="Job 3">
-            <h3>Statistics</h3>
-            <p>Is testing something you do appreciate? Are you ready to contribute by being a tester? If you've just answered "yes", say no more!</p>
+            <h3>User Dashboard</h3>
+            <p>Are you a user? Feel free to have a look at the user dashboard on this section!</p>
           </a>
         </div>
       </div>

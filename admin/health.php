@@ -16,7 +16,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Bot Dashboard</title>
     <link rel="icon" type="image/png" href="img/Sparkles.png">
     <script>
@@ -367,53 +366,36 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #555;
         }
 
-        .github-box {
-            background-color: #ccc;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15%;
-            text-align: center;
+        .menu-items .packages-menu-item {
+            font-weight: bold;
+        }
+
+        .api-status-box {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10%;
+            margin-right: 40%;
+            width: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: auto;
-            margin-right: 40%;
             position: fixed;
             z-index: 1;
         }
 
-        .github-button {
-            width: 200px;
-            background-color: #2c2c2c;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .extension-button {
-            width: 200px;
-            background-color: #2c2c2c;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .extension-button i {
-            margin-right: 10px;
-        }
-
-        .menu-items .packages-menu-item {
+        .api-status-text {
+            margin-left: 10px;
             font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .status-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 200px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -446,24 +428,16 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <div class="github-box">
-            <div class="github-button" onclick="location.href='github.php'">
-                <i class="fab fa-github"></i> Github Extension
-            </div>
-            <div class="extension-button" onclick="location.href='health.php'">
-                <i class="fas fa-heartbeat"></i> Health Extension
-            </div>
-            <div class="extension-button" onclick="location.href='logs.php'">
-                <i class="fas fa-file-alt"></i> Logs Extension
-            </div>
-            <div class="extension-button" onclick="location.href='task_manager.php'">
-                <i class="fas fa-tasks"></i> Task Manager
-            </div>
-            <div class="extension-button" onclick="location.href='statistics.php'">
-                <i class="fas fa-chart-bar"></i> Statistics
-            </div>
-        </div>
         <h1 class="center">Bot Dashboard</h1>
+
+        <div class="api-status-box">
+            <div class="status-dot" id="status-dot"></div>
+            <div id="status-text" class="api-status-text">
+                <strong>API Status:</strong><br>
+                Checking the health of the API...
+            </div>
+            <p>This is the API status tab</p> <!-- Move this line to the bottom -->
+        </div>
     </div>
     <script>
         function toggleMenu() {
@@ -510,7 +484,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 manageText.classList.remove('collapsed');
             }
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             var packagesEnabled = localStorage.getItem('packagesEnabled');
             if (packagesEnabled === 'true') {
@@ -523,6 +496,7 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         function togglePackages() {
             var menuItems = document.querySelector('.menu-items');
             var enablePackageButton = document.querySelector('.grey-box button');
+
             var packagesMenuItem = document.querySelector('.packages-menu-item');
 
             if (!packagesMenuItem) {
@@ -539,6 +513,76 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 localStorage.setItem('packagesEnabled', 'false');
             }
         }
+
+        function healthCheck() {
+            var statusDot = document.getElementById('status-dot');
+            var statusText = document.getElementById('status-text');
+
+
+            fetch('http://localhost:3000')
+                .then(response => {
+                    if (response.ok) {
+                        statusDot.style.backgroundColor = 'green';
+                        statusText.innerText = 'API is UP\n';
+                    } else {
+                        statusDot.style.backgroundColor = 'red';
+                        statusText.innerText = 'API is DOWN\n';
+                    }
+                })
+                .catch(error => {
+                    statusDot.style.backgroundColor = 'red';
+                    statusText.innerText = 'API is DOWN\n';
+                });
+        }
+
+        function checkEndpoints() {
+            const endpoints = [
+                'http://localhost:3000/alert',
+                'http://localhost:3000/AreaInfo',
+                'http://localhost:3000/api/emails',
+                'http://localhost:3000/test'
+            ];
+
+            const statusTextElement = document.getElementById('status-text');
+            statusTextElement.innerHTML = '<strong>API is UP</strong><br></br>';
+
+            const formatEndpointName = (url) => {
+                const parts = url.split('/');
+                const endpointName = parts[parts.length - 1];
+                return endpointName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            };
+
+            Promise.all(
+                endpoints.map(endpoint =>
+                    fetch(endpoint)
+                    .then(response => ({
+                        endpointName: formatEndpointName(endpoint),
+                        result: response.ok ? 'OK' : 'KO'
+                    }))
+                    .catch(error => ({
+                        endpointName: formatEndpointName(endpoint),
+                        result: 'KO'
+                    }))
+                )
+            ).then(results => {
+                results.forEach(({
+                    endpointName,
+                    result
+                }) => {
+                    statusTextElement.innerHTML += `<strong>${endpointName}</strong> - ${result}<br>`;
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            healthCheck();
+            checkEndpoints();
+
+            setInterval(function() {
+                healthCheck();
+                checkEndpoints();
+            }, 10000);
+        });
 
         function displayErrorMessage() {
             window.location.href = 'settings.php';

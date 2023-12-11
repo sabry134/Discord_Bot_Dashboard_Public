@@ -364,6 +364,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var packagesEnabled = localStorage.getItem('packagesEnabled');
             if (packagesEnabled === 'true') {
                 togglePackages();
+            } else {
+                displayErrorMessage();
             }
         });
 
@@ -386,6 +388,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 enablePackageButton.innerText = 'Enable Package';
                 localStorage.setItem('packagesEnabled', 'false');
             }
+        }
+
+        function displayErrorMessage() {
+            window.location.href = 'settings.php';
         }
     </script>
 </body>

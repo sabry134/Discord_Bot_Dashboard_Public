@@ -14,6 +14,7 @@ __**Implemented:**__
 - Inbox system 
 - On the user interface, create a button to send a message to the administrators of the dashboard (e.g "Message the Mods" button)
 - Servers where the bot is in
+- GitHub Integration: Connect the bot to a GitHub repository for version control and updates.
 
 __**In progress**__
 
@@ -24,18 +25,17 @@ __**In progress**__
 - Merge all the web extensions inside one
 - Desktop application for PC users (80% -> Outdated)
 - Christmas/Haloween/Snow theme to toggle (0%)
+- Settings System -> Goes with package system + Contact the developers webhook
 
 
 
 **__TODO:__**
 
-- Settings System -> Goes with package system + Contact the developers webhook
 - Responsive design
 - Implement more AREA related to discord
 - Packages that allows you to create new pages and more discord projects (like a discord project system)
 - Page improvements (Message page for example)
 - On server scroll, you show the server details (Example https://imgur.com/Q3hJ7pS.png)
-- GitHub Integration: Connect the bot to a GitHub repository for version control and updates.
 - Webhook Management: Allow users to manage and create webhooks through the dashboard.
 - Third-Party Plugin Support: Enable users to add third-party plugins to enhance bot functionality.
 - Multilingual Support: Implement multilingual support for the dashboard.
