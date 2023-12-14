@@ -1,0 +1,66 @@
+---
+- name: Setup Docker, Minikube, and kubectl on VM
+  hosts: all
+  become: true
+
+  vars:
+    ansible_ssh_user: vagrant
+
+  tasks:
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_ssh_user }}"
+        groups: docker
+        append: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+
+    - name: Run Docker container
+      command: "docker run sabrysuperman/whanos-c"
+
+    - name: Install Minikube
+      shell: "curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && sudo install minikube-linux-amd64 /usr/local/bin/minikube"
+      args:
+        creates: "/usr/local/bin/minikube"
+
+    - name: Install kubectl snap
+      snap:
+        name: kubectl
+        classic: yes
+        state: present

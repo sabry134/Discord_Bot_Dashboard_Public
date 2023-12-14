@@ -383,20 +383,21 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         .menu-items .packages-menu-item {
             font-weight: bold;
         }
-        .grey-box button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s;
-    }
 
-    .grey-box button:hover {
-        background-color: #45a049;
-    }
+        .grey-box button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .grey-box button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 
@@ -432,6 +433,8 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         <div class="grey-box">
             <h2>A package is an extension available on the dashboard that allows you to access additional pages.</h2>
             <button onclick="togglePackages()">Enable Package</button>
+            <button id="enableLogsButton" onclick="toggleLogs()">Enable Logs</button>
+            
         </div>
     </div>
     <script>
@@ -507,6 +510,67 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 localStorage.setItem('packagesEnabled', 'false');
             }
         }
+
+        function toggleLogs() {
+        var enableLogsButton = document.getElementById('enableLogsButton');
+        var webhookUrlInputContainer = document.getElementById('webhookUrlInputContainer');
+        var logsEnabled = localStorage.getItem('logsEnabled') === 'true';
+
+        if (logsEnabled) {
+            console.log('Logs are now disabled');
+            enableLogsButton.innerText = 'Enable Logs';
+            localStorage.setItem('logsEnabled', 'false');
+            webhookUrlInputContainer.style.display = 'none';
+        } else {
+            var webhookUrl = prompt('Please enter the Discord webhook URL:');
+            if (webhookUrl !== null && isValidWebhookUrl(webhookUrl)) {
+                console.log('Logs are now enabled');
+                enableLogsButton.innerText = 'Disable Logs';
+                localStorage.setItem('logsEnabled', 'true');
+                localStorage.setItem('webhookUrl', webhookUrl);
+                webhookUrlInputContainer.style.display = 'block';
+            } else {
+                alert('Invalid Discord webhook URL. Please enter a valid URL.');
+            }
+        }
+    }
+
+    function isValidWebhookUrl(url) {
+        var regex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/[a-zA-Z0-9_-]+$/;
+        return regex.test(url);
+    }
+
+    function saveWebhookUrl() {
+        var webhookUrlInput = document.getElementById('webhookUrlInput');
+        var webhookUrl = webhookUrlInput.value;
+
+        if (isValidWebhookUrl(webhookUrl)) {
+            localStorage.setItem('webhookUrl', webhookUrl);
+            console.log('Webhook URL saved:', webhookUrl);
+        } else {
+            console.log('Invalid Discord webhook URL. Please enter a valid URL.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var logsEnabled = localStorage.getItem('logsEnabled') === 'true';
+        var enableLogsButton = document.getElementById('enableLogsButton');
+        var webhookUrlInputContainer = document.getElementById('webhookUrlInputContainer');
+
+        if (logsEnabled) {
+            enableLogsButton.innerText = 'Disable Logs';
+            webhookUrlInputContainer.style.display = 'block';
+        } else {
+            enableLogsButton.innerText = 'Enable Logs';
+            webhookUrlInputContainer.style.display = 'none';
+        }
+
+        var savedWebhookUrl = localStorage.getItem('webhookUrl');
+        if (savedWebhookUrl) {
+            var webhookUrlInput = document.getElementById('webhookUrlInput');
+            webhookUrlInput.value = savedWebhookUrl;
+        }
+    });
     </script>
 </body>
 
