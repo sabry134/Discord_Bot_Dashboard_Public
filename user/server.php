@@ -13,6 +13,7 @@
             background-image: url('../admin/img/dashboard_bg.gif');
             background-size: cover;
             font-family: Arial, sans-serif;
+            overflow: hidden;
         }
 
         #header {
@@ -108,6 +109,33 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
+            overflow: auto;
+        }
+
+        #toggleButton {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #7289DA;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+
+        #toggleButton:hover {
+            background-color: #677BC4;
+        }
+
+        .snowflake {
+            position: absolute;
+            font-size: 20px;
+            color: #fff;
+            user-select: none;
         }
     </style>
 </head>
@@ -156,6 +184,8 @@
             <a href="message_mods.php">Message Mods</a>
         </div>
 
+        <button id="toggleButton">Enable Snow</button>
+
         <div id="discord-container">
             <iframe id="discord-invite" src="https://discord.com/widget?id=<?php echo $serverID; ?>&theme=dark" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
         </div>
@@ -166,6 +196,87 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const numberOfSnowflakes = 50;
+            let snowEffectEnabled = localStorage.getItem('snowEffectEnabled') === 'true';
+
+            const toggleButton = document.getElementById('toggleButton');
+            updateButtonText();
+
+            toggleButton.addEventListener('click', function () {
+                snowEffectEnabled = !snowEffectEnabled;
+                updateButtonText();
+                localStorage.setItem('snowEffectEnabled', snowEffectEnabled);
+
+                const snowflakes = document.querySelectorAll('.snowflake');
+                snowflakes.forEach(function (snowflake) {
+                    snowflake.remove();
+                });
+
+                if (snowEffectEnabled) {
+                    for (let i = 0; i < numberOfSnowflakes; i++) {
+                        createSnowflake();
+                    }
+                }
+            });
+
+            function updateButtonText() {
+                toggleButton.textContent = snowEffectEnabled ? 'Disable Snow' : 'Enable Snow';
+            }
+
+            function createSnowflake() {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❄';
+                document.body.appendChild(snowflake);
+
+                const initialX = Math.random() * window.innerWidth;
+                const initialY = Math.random() * window.innerHeight;
+
+                snowflake.style.left = initialX + 'px';
+                snowflake.style.top = initialY + 'px';
+
+                animateSnowflake(snowflake);
+            }
+
+            function animateSnowflake(snowflake) {
+                if (!snowEffectEnabled) {
+                    return;
+                }
+
+                const speed = 1 + Math.random() * 2;
+                const rotationSpeed = 0.02 + Math.random() * 0.1;
+
+                function moveSnowflake() {
+                    if (!snowEffectEnabled) {
+                        snowflake.remove();
+                        return;
+                    }
+
+                    const currentY = parseFloat(snowflake.style.top);
+                    snowflake.style.top = currentY + speed + 'px';
+
+                    const currentRotation = parseFloat(snowflake.style.transform.replace('rotate(', '').replace('deg)', ''));
+                    snowflake.style.transform = 'rotate(' + (currentRotation + rotationSpeed) + 'deg)';
+
+                    if (currentY > window.innerHeight) {
+                        snowflake.style.top = '0px';
+                    }
+
+                    requestAnimationFrame(moveSnowflake);
+                }
+
+                moveSnowflake();
+            }
+
+            if (snowEffectEnabled) {
+                for (let i = 0; i < numberOfSnowflakes; i++) {
+                    createSnowflake();
+                }
+            }
+        });
+    </script>
 
 </body>
 

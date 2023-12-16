@@ -18,15 +18,18 @@ __**Implemented:**__
 - On server scroll, you show the server details (Example https://imgur.com/Q3hJ7pS.png)
 - User Dashboard
 - Settings System -> Goes with package system
+- Ansible VM to test the deployment
+- Third-Party Plugin Support: Enable users to add third-party plugins to enhance bot functionality.
+- Extensions that allows to code your own plugins (See Extensions folder)
+- Detailed documentation, currently available [here](https://sabry134.github.io/Discord-Bot-Dashboard/)
+- Christmas/Halloween/Snow theme to toggle
 
 __**In progress**__
 
 - Mobile app for the dashboard (0%)
-- Detailed documentation, currently available [here](https://sabry134.github.io/Discord-Bot-Dashboard/) (90%)
-- Extensions that allows to code your own plugins (See Extensions folder) (10%)
 - Merge all the web extensions inside one
 - Desktop application for PC users (80% -> Outdated)
-- Christmas/Haloween/Snow theme to toggle (0%)
+- Embed Message Builder: Create an interface to easily design and send rich embed messages.
 
 
 
@@ -34,12 +37,7 @@ __**In progress**__
 
 - Responsive design
 - Implement more AREA related to discord
-- Packages that allows you to create new pages and more discord projects (like a discord project system + website logs on webhook)
 - Page improvements (Message page for example)
-- Webhook Management: Allow users to manage and create webhooks through the dashboard.
-- Third-Party Plugin Support: Enable users to add third-party plugins to enhance bot functionality.
-- Tutorial/Guide System: Create a system to guide new users through the features of the dashboard.
-- Embed Message Builder: Create an interface to easily design and send rich embed messages.
 
 
 
@@ -48,4 +46,3 @@ __**In progress**__
 - Jenkins system to test the images and get the health of images -> Also making it possble to run an image through Jenkins
 - More deployment systems
 - Kubernetes multi nodes deployment
-- Ansible VM to test the deployment

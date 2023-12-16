@@ -434,10 +434,24 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             <h2>A package is an extension available on the dashboard that allows you to access additional pages.</h2>
             <button onclick="togglePackages()">Enable Package</button>
             <button id="enableLogsButton" onclick="toggleLogs()">Enable Logs</button>
-            
+
         </div>
     </div>
     <script>
+        const menuItemUrls = {
+            'Dashboard': 'dashboard.php',
+            'Commands': 'commands.php',
+            'Manage Webhooks': 'webhook_manager.php',
+            'Manage Servers': 'manage_bot.php',
+            'Send a message': 'message.php',
+            'AREA': 'area.php',
+            'Alerts': 'alerts.php',
+            'Inbox': 'requests.php',
+            'Staff documentation': 'documentation.php',
+            'Settings': 'settings.php',
+            'User Dashboard': '../user/index.php',
+        };
+
         function toggleMenu() {
             var menu = document.querySelector('.menu');
             var menuItems = document.querySelector('.menu-items');
@@ -483,11 +497,31 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             }
         }
 
+        function loadConfigurationFromLocalStorage() {
+            var storedConfiguration = localStorage.getItem('botConfiguration');
+
+            if (storedConfiguration) {
+                var parsedConfiguration = JSON.parse(storedConfiguration);
+                updateMenu(parsedConfiguration.enabled);
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
+            loadConfigurationFromLocalStorage();
+            var storedConfiguration = localStorage.getItem('botConfiguration');
+
+            if (storedConfiguration) {
+                var parsedConfiguration = JSON.parse(storedConfiguration);
+                updateMenu(parsedConfiguration);
+            }
+
             var packagesEnabled = localStorage.getItem('packagesEnabled');
             if (packagesEnabled === 'true') {
                 togglePackages();
+            } else {
+                displayErrorMessage();
             }
+
+            applyConfiguration();
         });
 
         function togglePackages() {
@@ -512,65 +546,86 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         }
 
         function toggleLogs() {
-        var enableLogsButton = document.getElementById('enableLogsButton');
-        var webhookUrlInputContainer = document.getElementById('webhookUrlInputContainer');
-        var logsEnabled = localStorage.getItem('logsEnabled') === 'true';
+            var enableLogsButton = document.getElementById('enableLogsButton');
+            var webhookUrlInputContainer = document.getElementById('webhookUrlInputContainer');
+            var logsEnabled = localStorage.getItem('logsEnabled') === 'true';
 
-        if (logsEnabled) {
-            console.log('Logs are now disabled');
-            enableLogsButton.innerText = 'Enable Logs';
-            localStorage.setItem('logsEnabled', 'false');
-            webhookUrlInputContainer.style.display = 'none';
-        } else {
-            var webhookUrl = prompt('Please enter the Discord webhook URL:');
-            if (webhookUrl !== null && isValidWebhookUrl(webhookUrl)) {
-                console.log('Logs are now enabled');
-                enableLogsButton.innerText = 'Disable Logs';
-                localStorage.setItem('logsEnabled', 'true');
-                localStorage.setItem('webhookUrl', webhookUrl);
-                webhookUrlInputContainer.style.display = 'block';
+            if (logsEnabled) {
+                console.log('Logs are now disabled');
+                enableLogsButton.innerText = 'Enable Logs';
+                localStorage.setItem('logsEnabled', 'false');
+                webhookUrlInputContainer.style.display = 'none';
             } else {
-                alert('Invalid Discord webhook URL. Please enter a valid URL.');
+                var webhookUrl = prompt('Please enter the Discord webhook URL:');
+                if (webhookUrl !== null && isValidWebhookUrl(webhookUrl)) {
+                    console.log('Logs are now enabled');
+                    enableLogsButton.innerText = 'Disable Logs';
+                    localStorage.setItem('logsEnabled', 'true');
+                    localStorage.setItem('webhookUrl', webhookUrl);
+                    webhookUrlInputContainer.style.display = 'block';
+                } else {
+                    alert('Invalid Discord webhook URL. Please enter a valid URL.');
+                }
             }
         }
-    }
 
-    function isValidWebhookUrl(url) {
-        var regex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/[a-zA-Z0-9_-]+$/;
-        return regex.test(url);
-    }
-
-    function saveWebhookUrl() {
-        var webhookUrlInput = document.getElementById('webhookUrlInput');
-        var webhookUrl = webhookUrlInput.value;
-
-        if (isValidWebhookUrl(webhookUrl)) {
-            localStorage.setItem('webhookUrl', webhookUrl);
-            console.log('Webhook URL saved:', webhookUrl);
-        } else {
-            console.log('Invalid Discord webhook URL. Please enter a valid URL.');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var logsEnabled = localStorage.getItem('logsEnabled') === 'true';
-        var enableLogsButton = document.getElementById('enableLogsButton');
-        var webhookUrlInputContainer = document.getElementById('webhookUrlInputContainer');
-
-        if (logsEnabled) {
-            enableLogsButton.innerText = 'Disable Logs';
-            webhookUrlInputContainer.style.display = 'block';
-        } else {
-            enableLogsButton.innerText = 'Enable Logs';
-            webhookUrlInputContainer.style.display = 'none';
+        function isValidWebhookUrl(url) {
+            var regex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/[a-zA-Z0-9_-]+$/;
+            return regex.test(url);
         }
 
-        var savedWebhookUrl = localStorage.getItem('webhookUrl');
-        if (savedWebhookUrl) {
+        function saveWebhookUrl() {
             var webhookUrlInput = document.getElementById('webhookUrlInput');
-            webhookUrlInput.value = savedWebhookUrl;
+            var webhookUrl = webhookUrlInput.value;
+
+            if (isValidWebhookUrl(webhookUrl)) {
+                localStorage.setItem('webhookUrl', webhookUrl);
+                console.log('Webhook URL saved:', webhookUrl);
+            } else {
+                console.log('Invalid Discord webhook URL. Please enter a valid URL.');
+            }
         }
-    });
+
+        function applyConfiguration() {
+            var fileInput = document.getElementById('configFileInput');
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    try {
+                        var configData = JSON.parse(e.target.result);
+
+                        localStorage.setItem('botConfiguration', JSON.stringify(configData));
+
+                        updateMenu(configData.enabled);
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                        alert("Error parsing JSON file. Please make sure the file is valid.");
+                    }
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a JSON file.");
+            }
+        }
+
+        function updateMenu(enabledConfig) {
+            var menuItems = document.querySelectorAll('.menu-items a');
+
+            menuItems.forEach(function(menuItem) {
+                var menuItemText = menuItem.innerText.trim();
+                var enabled = enabledConfig[menuItemText];
+
+                if (enabled !== undefined) {
+                    menuItem.href = enabled === "true" ? menuItemUrls[menuItemText] : "#";
+                    menuItem.style.pointerEvents = enabled === "true" ? "auto" : "none";
+                    menuItem.style.color = enabled === "true" ? "#fff" : "#888";
+                }
+            });
+        }
     </script>
 </body>
 

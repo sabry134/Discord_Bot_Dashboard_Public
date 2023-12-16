@@ -1,0 +1,21 @@
+{
+    "enabled": {
+        "Dashboard": "true",
+        "Commands": "true",
+        "Manage Webhooks": "true",
+        "Manage Servers": "true",
+        "Send a message": "true",
+        "AREA": "true",
+        "Alerts": "true",
+        "Inbox": "true",
+        "Staff documentation": "true",
+        "Settings": "true"
+    },
+    "dockersystem": [
+        {
+            "minikube_ip": "192.168.49.2",
+            "front_end_port": "8080",
+            "back_end_port": "3000"
+        }
+    ]
+}

@@ -9,6 +9,7 @@ extract($_SESSION['userData']);
 
 $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -264,7 +265,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         .center {
             margin-top: 10px;
-            position: fixed;
             text-align: center;
             font-size: 50px;
             padding: 10px;
@@ -316,7 +316,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
-            z-index: -1;
         }
 
         .request-text {
@@ -367,49 +366,58 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             background-color: #555;
         }
 
-        .email-container {
-            margin-left: 30px;
-            margin-top: 100px;
-        }
-
-        .email-item a {
-            text-decoration: none;
-        }
-
-        .email-item p {
-            color: white;
-        }
-
-
-        .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 30px;
-            list-style-type: none;
-        }
-
-        .email-container .email-item {
-            background-color: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-            margin-left: 20%;
-            margin-top: 15px;
-        }
-
-
-        .email-item:hover {
-            background-color: #f9f9f9;
-        }
-
         .menu-items .packages-menu-item {
             font-weight: bold;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            margin-top: 15%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #error {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
@@ -442,14 +450,14 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         </div>
     </div>
     <div class="container">
-        <h1 class="center">Email Inbox</h1>
+        <h1 class="center">Bot Dashboard</h1>
+        <form>
+            <label for="configFile">Upload Config File:</label>
+            <input type="file" name="configFile" accept=".json" id="configFileInput" required>
+            <br>
+            <button type="button" onclick="applyConfiguration()">Apply Configuration</button>
+        </form>
     </div>
-
-    <div class="email-container" id="inboxContainer">
-        <ul id="emailList"></ul>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="assets/app.js"></script>
     <script>
         const menuItemUrls = {
             'Dashboard': 'dashboard.php',
@@ -510,13 +518,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             }
         }
 
-        function toggleMenuAndLoadInbox() {
-            toggleMenu();
-            loadEmailInbox();
-        }
-
-        document.querySelector('.request-text').addEventListener('click', toggleMenuAndLoadInbox);
-
         function loadConfigurationFromLocalStorage() {
             var storedConfiguration = localStorage.getItem('botConfiguration');
 
@@ -525,7 +526,6 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 updateMenu(parsedConfiguration.enabled);
             }
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             loadConfigurationFromLocalStorage();
             var storedConfiguration = localStorage.getItem('botConfiguration');
@@ -564,6 +564,10 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
                 enablePackageButton.innerText = 'Enable Package';
                 localStorage.setItem('packagesEnabled', 'false');
             }
+        }
+
+        function displayErrorMessage() {
+            window.location.href = 'settings.php';
         }
 
         function applyConfiguration() {

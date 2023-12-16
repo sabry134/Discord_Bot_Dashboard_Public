@@ -4,6 +4,46 @@
 
 **Welcome to the Discord Bot Dashboard Template repository!**
 
+## Supported platforms
+
+### Automation
+
+- Docker
+- Kubernetes (multi node deployments)
+- Ansible (VM testing)
+- Jenkins 
+- Traefik
+- Github action (Automatic push on dockerhub)
+
+
+### Features
+
+
+#### Staff section
+
+- Bot Hosting
+- Enable/Disable Commands
+- Webhook Creation
+- Server Managements
+- Bot Messages
+- Trigger the bot at specific times (AREA)
+- Alerts system
+- Inbox System
+- Customizable Documentation
+- Settings
+- Package system
+- Website Logs
+- Website health status
+
+#### User section
+
+- Announcements
+- User page (customizable by the administrator)
+- Message Moderators system
+
+
+**Full documentation is available [here](https://sabry134.github.io/Discord-Bot-Dashboard/)
+
 ## Overview
 
 This repository contains a Discord bot dashboard template built using PHP for the frontend and JavaScript for the backend. The dashboard provides an easy-to-use interface for managing and configuring your Discord bot, making it a valuable tool for bot developers and server administrators.

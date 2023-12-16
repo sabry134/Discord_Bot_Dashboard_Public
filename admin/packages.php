@@ -456,6 +456,9 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             <div class="extension-button" onclick="location.href='logs.php'">
                 <i class="fas fa-file-alt"></i> Logs Extension
             </div>
+            <div class="extension-button" onclick="location.href='plugin.php'">
+                <i class="fas fa-code"></i> Custom Plugin
+            </div>
             <div class="extension-button" onclick="location.href='task_manager.php'">
                 <i class="fas fa-tasks"></i> Task Manager
             </div>
@@ -466,6 +469,20 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
         <h1 class="center">Bot Dashboard</h1>
     </div>
     <script>
+        const menuItemUrls = {
+            'Dashboard': 'dashboard.php',
+            'Commands': 'commands.php',
+            'Manage Webhooks': 'webhook_manager.php',
+            'Manage Servers': 'manage_bot.php',
+            'Send a message': 'message.php',
+            'AREA': 'area.php',
+            'Alerts': 'alerts.php',
+            'Inbox': 'requests.php',
+            'Staff documentation': 'documentation.php',
+            'Settings': 'settings.php',
+            'User Dashboard': '../user/index.php',
+        };
+
         function toggleMenu() {
             var menu = document.querySelector('.menu');
             var menuItems = document.querySelector('.menu-items');
@@ -511,13 +528,32 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
             }
         }
 
+        function loadConfigurationFromLocalStorage() {
+            var storedConfiguration = localStorage.getItem('botConfiguration');
+
+            if (storedConfiguration) {
+                var parsedConfiguration = JSON.parse(storedConfiguration);
+                updateMenu(parsedConfiguration.enabled);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            loadConfigurationFromLocalStorage();
+            var storedConfiguration = localStorage.getItem('botConfiguration');
+
+            if (storedConfiguration) {
+                var parsedConfiguration = JSON.parse(storedConfiguration);
+                updateMenu(parsedConfiguration);
+            }
+
             var packagesEnabled = localStorage.getItem('packagesEnabled');
             if (packagesEnabled === 'true') {
                 togglePackages();
             } else {
                 displayErrorMessage();
             }
+
+            applyConfiguration();
         });
 
         function togglePackages() {
@@ -542,6 +578,47 @@ $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
 
         function displayErrorMessage() {
             window.location.href = 'settings.php';
+        }
+
+        function applyConfiguration() {
+            var fileInput = document.getElementById('configFileInput');
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    try {
+                        var configData = JSON.parse(e.target.result);
+
+                        localStorage.setItem('botConfiguration', JSON.stringify(configData));
+
+                        updateMenu(configData.enabled);
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                        alert("Error parsing JSON file. Please make sure the file is valid.");
+                    }
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a JSON file.");
+            }
+        }
+
+        function updateMenu(enabledConfig) {
+            var menuItems = document.querySelectorAll('.menu-items a');
+
+            menuItems.forEach(function(menuItem) {
+                var menuItemText = menuItem.innerText.trim();
+                var enabled = enabledConfig[menuItemText];
+
+                if (enabled !== undefined) {
+                    menuItem.href = enabled === "true" ? menuItemUrls[menuItemText] : "#";
+                    menuItem.style.pointerEvents = enabled === "true" ? "auto" : "none";
+                    menuItem.style.color = enabled === "true" ? "#fff" : "#888";
+                }
+            });
         }
     </script>
 </body>
